@@ -1,0 +1,33 @@
+version: 2
+
+seeds:
+  - name: mapeo_geografia
+    description: >
+      Asigna a cada geografía, tal como aparece en las series del INE, su nivel
+      (nacional, comunidad o provincia) y la comunidad a la que pertenece.
+      La clave es (geografia, n_partes_nombre) porque las siete comunidades
+      uniprovinciales aparecen dos veces: como comunidad (series de 3 partes)
+      y como provincia (series de 5 partes). Cantabria usa el mismo nombre en ambas.
+    config:
+      column_types:
+        n_partes_nombre: int64
+    columns:
+      - name: geografia
+        description: Nombre exacto de la geografía en los datos del INE.
+        data_tests:
+          - not_null
+      - name: n_partes_nombre
+        description: Número de partes del nombre de la serie (3, 4 o 5).
+        data_tests:
+          - not_null
+      - name: nivel
+        description: Nivel territorial. Las ciudades autónomas (Ceuta y Melilla) cuentan como comunidad.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['nacional', 'comunidad', 'provincia']
+      - name: comunidad
+        description: Comunidad a la que pertenece. Vacío para Nacional.
+      - name: observacion
+        description: Notas sobre casos especiales.

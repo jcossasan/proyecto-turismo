@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: eoh
+    description: >
+      Encuesta de Ocupación Hotelera (INE), tabla 67190: viajeros y pernoctaciones
+      por comunidades autónomas y provincias. Cargada con ingesta_ine.py.
+    schema: turismo_raw
+    tables:
+      - name: raw_eoh_viajeros_pernoctaciones
+        description: Datos en bruto tal como los devuelve la API del INE, aplanados a una fila por serie y mes.
+        columns:
+          - name: serie_cod
+            description: Código de la serie en el INE (por ejemplo EOT1457).
+            data_tests:
+              - not_null
+          - name: serie_nombre
+            description: Nombre de la serie, con geografía, métrica y residencia concatenadas.
+            data_tests:
+              - not_null

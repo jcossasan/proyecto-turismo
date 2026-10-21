@@ -1,0 +1,68 @@
+version: 2
+
+models:
+  - name: stg_eoh__series
+    description: >
+      Una fila por serie del INE y mes. Separa el nombre de la serie en geografía,
+      métrica, categoría, residencia y tipo de dato, normaliza erratas del INE
+      ("Viajero" -> "Viajeros", "Extranjero" -> "extranjero") y corrige el desfase
+      horario de la fecha.
+    columns:
+      - name: id_observacion
+        description: Identificador único de la observación (serie + mes).
+        data_tests:
+          - unique
+          - not_null
+
+      - name: serie_cod
+        data_tests:
+          - not_null
+
+      - name: n_partes_nombre
+        description: Número de partes del nombre de la serie. Se esperan 3, 4 o 5.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [3, 4, 5]
+                quote: false
+
+      - name: geografia
+        description: Nacional, comunidad autónoma o provincia. El nivel se asigna más adelante con un seed.
+        data_tests:
+          - not_null
+
+      - name: metrica
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Viajeros', 'Pernoctaciones']
+
+      - name: categoria_alojamiento
+        description: Categoría de alojamiento. Solo disponible en series de 4 o 5 partes.
+
+      - name: residencia
+        data_tests:
+          - not_null 
+          - accepted_values:
+              arguments:
+                values: ['Total', 'Residentes en España', 'Residentes en el extranjero']
+
+      - name: tipo_dato
+        description: Sufijo "Dato" presente solo en las series de 5 partes.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Dato']
+
+      - name: fecha_mes
+        description: Primer día del mes al que se refiere el dato, en fecha de calendario español.
+        data_tests:
+          - not_null
+
+      - name: valor
+        description: Valor publicado por el INE. Puede venir vacío si el dato es secreto.
+        data_tests:
+          - not_null:
+              config:
+                severity: warn

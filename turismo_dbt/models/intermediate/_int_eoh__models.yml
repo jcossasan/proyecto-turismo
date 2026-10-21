@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: int_eoh__observaciones
+    description: >
+      Observaciones del INE con su nivel territorial (nacional, comunidad o provincia)
+      y la comunidad a la que pertenecen. Es la base sobre la que se hacen los cuadres
+      y se construirán los modelos finales.
+    columns:
+      - name: id_observacion
+        data_tests:
+          - unique
+          - not_null
+      - name: nivel
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['nacional', 'comunidad', 'provincia']
+      - name: fecha_mes
+        data_tests:
+          - not_null
+      - name: geografia
+        data_tests:
+          - not_null

@@ -1,0 +1,6 @@
+.venv/
+data/
+target/
+logs/
+dbt_packages/
+IDGOOGLE*.txt
