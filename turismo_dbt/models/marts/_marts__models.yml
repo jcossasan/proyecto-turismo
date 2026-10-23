@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: dim_geografia
+    description: >
+      Dimensión de geografías (nacional, comunidades y provincias) con la comunidad
+      a la que pertenece cada una. Una fila por nivel y geografía.
+    columns:
+      - name: id_geografia
+        description: Clave única, formada por nivel|geografía.
+        data_tests:
+          - unique
+          - not_null
+      - name: nivel
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['nacional', 'comunidad', 'provincia']
+
+  - name: fct_ocupacion_mensual
+    description: >
+      Ocupación hotelera mensual por geografía (viajeros, pernoctaciones, estancia media
+      y variación interanual). Una fila por nivel, geografía y mes. Filtrar siempre
+      por nivel: las comunidades uniprovinciales aparecen como comunidad y como provincia.
+    columns:
+      - name: id_observacion_mensual
+        description: Clave única, formada por nivel|geografía|mes.
+        data_tests:
+          - unique
+          - not_null
+      - name: id_geografia
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_geografia')
+                field: id_geografia
+      - name: fecha_mes
+        data_tests:
+          - not_null
+      - name: viajeros_total
+        description: Viajeros entrados en el mes. Vacío si el dato es secreto o no está publicado.
+      - name: pernoctaciones_total
+        description: Noches pasadas por los viajeros entrados en el mes.
+      - name: estancia_media
+        description: Pernoctaciones divididas entre viajeros (noches por viajero).
+      - name: pct_viajeros_extranjeros
+        description: Proporción de viajeros residentes en el extranjero sobre el total.
+      - name: viajeros_total_anio_anterior
+        description: Viajeros del mismo mes un año antes. Vacío si ese mes no existe.
+      - name: variacion_interanual_viajeros
+        description: Variación relativa de viajeros respecto al mismo mes del año anterior.
+      - name: dato_secreto
+        description: El INE marca alguna cifra de esa fila como secreto estadístico.
+      - name: dato_completo
+        description: Existen las seis cifras (viajeros y pernoctaciones x tres residencias).
